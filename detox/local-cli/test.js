@@ -150,7 +150,7 @@ function prepareMochaArgs({ cliConfig, runnerArgs, runnerConfig, platform }) {
     },
     env: _.omitBy({
       DETOX_APP_LAUNCH_ARGS: cliConfig.appLaunchArgs,
-      DETOX_DEVICE_LAUNCH_ARGS: cliConfig.deviceLaunchArgs,
+      DETOX_DEVICE_BOOT_ARGS: cliConfig.deviceBootArgs,
     }, _.isUndefined),
     specs: _.isEmpty(specs) ? [runnerConfig.specs] : specs,
   };
@@ -184,7 +184,7 @@ async function prepareJestArgs({ cliConfig, runnerArgs, runnerConfig, platform }
       DETOX_CONFIGURATION: cliConfig.configuration,
       DETOX_CONFIG_PATH: cliConfig.configPath,
       DETOX_DEBUG_SYNCHRONIZATION: cliConfig.debugSynchronization,
-      DETOX_DEVICE_LAUNCH_ARGS: cliConfig.deviceLaunchArgs,
+      DETOX_DEVICE_BOOT_ARGS: cliConfig.deviceBootArgs,
       DETOX_DEVICE_NAME: cliConfig.deviceName,
       DETOX_FORCE_ADB_INSTALL: platform === 'android' ? cliConfig.forceAdbInstall : undefined,
       DETOX_GPU: cliConfig.gpu,

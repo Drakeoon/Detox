@@ -299,6 +299,25 @@ Please check your Detox config${this._atPath()}`,
     });
   }
 
+  malformedDeviceBootArgs(deviceAlias) {
+    return new DetoxConfigError({
+      message: `Invalid type of "bootArgs" inside the device configuration.`
+        + ` Expected a string.`,
+      hint: `Check that in your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnDeviceConfig(deviceAlias),
+      inspectOptions: { depth: 3 },
+    });
+  }
+
+  cannotUseBootArgsForDevice(deviceAlias, deviceConfig) {
+    return new DetoxConfigError({
+      message: `The current device type ${J(deviceConfig.type)}" does not support "bootArgs" property.`,
+      hint: `Check that in your Detox config${this._atPath()}`,
+      debugInfo: this._focusOnDeviceConfig(deviceAlias),
+      inspectOptions: { depth: 3 },
+    });
+  }
+
   malformedUtilBinaryPaths(deviceAlias) {
     return new DetoxConfigError({
       message: `Invalid type of "utilBinaryPaths" inside the device configuration.`

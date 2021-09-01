@@ -46,13 +46,13 @@ class EmulatorDriver extends AndroidDriver {
     return this._name;
   }
 
-  async acquireFreeDevice(deviceQuery) {
+  async acquireFreeDevice(deviceQuery, deviceConfig) {
     const avdName = _.isPlainObject(deviceQuery) ? deviceQuery.avdName : deviceQuery;
 
     await this._avdValidator.validate(avdName);
-    await this._fixAvdConfigIniSkinNameIfNeeded(avdName);
+    await this._fixAvdConfigIniSkinNameIfNeeded(avdName, deviceConfig.headless);
 
-    const adbName = await this._deviceAllocation.allocateDevice(avdName);
+    const adbName = await this._deviceAllocation.allocateDevice(avdName, deviceConfig);
     await this.adb.apiLevel(adbName);
     await this.adb.disableAndroidAnimations(adbName);
     await this.adb.unlockScreen(adbName);
@@ -74,8 +74,12 @@ class EmulatorDriver extends AndroidDriver {
     await this.appInstallHelper.install(deviceId, binaryPath, testBinaryPath);
   }
 
-  /*async*/ binaryVersion() {
-    return this._emuVersionResolver.resolve();
+  /**
+   * @param {boolean} headless
+   * @async
+   */
+  binaryVersion(headless) {
+    return this._emuVersionResolver.resolve(headless);
   }
 
   async cleanup(deviceId, bundleId) {
@@ -95,8 +99,8 @@ class EmulatorDriver extends AndroidDriver {
     await this.adb.setLocation(deviceId, lat, lon);
   }
 
-  async _fixAvdConfigIniSkinNameIfNeeded(avdName) {
-    const binaryVersion = _.get(await this.binaryVersion(), 'major');
+  async _fixAvdConfigIniSkinNameIfNeeded(avdName, headless) {
+    const binaryVersion = _.get(await this.binaryVersion(headless), 'major');
     if (!binaryVersion) {
       log.warn({ event: 'EMU_SKIN_CFG_PATCH' }, [
         'Failed to detect emulator version! (see previous logs)',

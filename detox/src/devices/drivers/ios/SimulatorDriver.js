@@ -10,7 +10,6 @@ const SimulatorScreenshotPlugin = require('../../../artifacts/screenshot/Simulat
 const temporaryPath = require('../../../artifacts/utils/temporaryPath');
 const SimulatorRecordVideoPlugin = require('../../../artifacts/video/SimulatorRecordVideoPlugin');
 const DetoxRuntimeError = require('../../../errors/DetoxRuntimeError');
-const argparse = require('../../../utils/argparse');
 const environment = require('../../../utils/environment');
 const getAbsoluteBinaryPath = require('../../../utils/getAbsoluteBinaryPath');
 const log = require('../../../utils/logger').child({ __filename });
@@ -62,7 +61,7 @@ class SimulatorDriver extends IosDriver {
     await super.cleanup(deviceId, bundleId);
   }
 
-  async acquireFreeDevice(deviceQuery) {
+  async acquireFreeDevice(deviceQuery, deviceConfig) {
     const udid = await this.deviceRegistry.allocateDevice(async () => {
       return await this._findOrCreateDevice(deviceQuery);
     });
@@ -75,7 +74,7 @@ class SimulatorDriver extends IosDriver {
     this._name = `${udid} ${deviceComment}`;
 
     try {
-      await this._boot(udid, deviceQuery.type || deviceQuery);
+      await this._boot(udid, deviceConfig);
     } catch (e) {
       await this.deviceRegistry.disposeDevice(udid);
       throw e;
@@ -98,10 +97,9 @@ class SimulatorDriver extends IosDriver {
     }
   }
 
-  async _boot(deviceId, type) {
-    const deviceLaunchArgs = argparse.getArgValue('deviceLaunchArgs');
-    const coldBoot = await this.applesimutils.boot(deviceId, deviceLaunchArgs);
-    await this.emitter.emit('bootDevice', { coldBoot, deviceId, type });
+  async _boot(deviceId, deviceConfig) {
+    const coldBoot = await this.applesimutils.boot(deviceId, deviceConfig.bootArgs);
+    await this.emitter.emit('bootDevice', { coldBoot, deviceId, type: deviceConfig.type });
   }
 
   async installApp(deviceId, binaryPath) {
@@ -190,10 +188,10 @@ class SimulatorDriver extends IosDriver {
     await this.applesimutils.clearKeychain(deviceId);
   }
 
-  async resetContentAndSettings(deviceId) {
+  async resetContentAndSettings(deviceId, deviceConfig) {
     await this.shutdown(deviceId);
     await this.applesimutils.resetContentAndSettings(deviceId);
-    await this._boot(deviceId);
+    await this._boot(deviceId, deviceConfig);
   }
 
   getLogsPaths(deviceId) {

@@ -23,7 +23,7 @@ class DeviceDriverBase {
     return {};
   }
 
-  async acquireFreeDevice(_deviceQuery) {
+  async acquireFreeDevice(_deviceQuery, _deviceConfig) {
     return await Promise.resolve('');
   }
 
@@ -153,7 +153,7 @@ class DeviceDriverBase {
     return await Promise.resolve('');
   }
 
-  async resetContentAndSettings() {
+  async resetContentAndSettings(_deviceId, _deviceConfig) {
     return await Promise.resolve('');
   }
 

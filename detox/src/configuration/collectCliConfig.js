@@ -18,7 +18,7 @@ function collectCliConfig({ argv }) {
     configPath: get('config-path'),
     configuration: get('configuration'),
     debugSynchronization: get('debug-synchronization'),
-    deviceLaunchArgs: get('device-launch-args'),
+    deviceBootArgs: get('device-boot-args'),
     appLaunchArgs: get('app-launch-args'),
     deviceName: get('device-name'),
     forceAdbInstall: get('force-adb-install'),

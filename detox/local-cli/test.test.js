@@ -178,10 +178,17 @@ describe('CLI', () => {
       expect(cliCall().command).toContain('--gpu angle_indirect');
     });
 
-    test('--device-launch-args should be passed as an environment variable', async () => {
+    test('--device-boot-args should be passed as an environment variable', async () => {
+      await run(`--device-boot-args "--verbose"`);
+      expect(cliCall().env).toEqual({
+        DETOX_DEVICE_BOOT_ARGS: '--verbose',
+      });
+    });
+
+    test('--device-launch-args should serve as an alias to --device-boot-args', async () => {
       await run(`--device-launch-args "--verbose"`);
       expect(cliCall().env).toEqual({
-        DETOX_DEVICE_LAUNCH_ARGS: '--verbose',
+        DETOX_DEVICE_BOOT_ARGS: '--verbose',
       });
     });
 
@@ -568,11 +575,16 @@ describe('CLI', () => {
       expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_GPU: 'angle_indirect' }));
     });
 
-    test('--device-launch-args should be passed as environment variable', async () => {
-      await run(`--device-launch-args "--verbose"`);
+    test('--device-boot-args should be passed as environment variable', async () => {
+      await run(`--device-boot-args "--verbose"`);
       expect(cliCall().env).toEqual(expect.objectContaining({
-        DETOX_DEVICE_LAUNCH_ARGS: '--verbose'
+        DETOX_DEVICE_BOOT_ARGS: '--verbose'
       }));
+    });
+
+    test('--device-launch-args should serve as an alias to --device-boot-args', async () => {
+      await run(`--device-launch-args "--verbose"`);
+      expect(cliCall().env.DETOX_DEVICE_BOOT_ARGS).toBe('--verbose');
     });
 
     test('--app-launch-args should be passed as an environment variable', async () => {
@@ -691,9 +703,9 @@ describe('CLI', () => {
     });
 
     test('-- <...explicitPassthroughArgs> should be forwarded to the test runner CLI as-is', async () => {
-      await run('--device-launch-args detoxArgs e2eFolder -- a -a --a --device-launch-args runnerArgs');
-      expect(cliCall().command).toMatch(/a -a --a --device-launch-args runnerArgs .* e2eFolder$/);
-      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_DEVICE_LAUNCH_ARGS: 'detoxArgs' }));
+      await run('--device-boot-args detoxArgs e2eFolder -- a -a --a --device-boot-args runnerArgs');
+      expect(cliCall().command).toMatch(/a -a --a --device-boot-args runnerArgs .* e2eFolder$/);
+      expect(cliCall().env).toEqual(expect.objectContaining({ DETOX_DEVICE_BOOT_ARGS: 'detoxArgs' }));
     });
 
     test('-- <...explicitPassthroughArgs> should omit double-dash "--" itself, when forwarding args', async () => {

@@ -217,7 +217,7 @@ declare global {
         interface DetoxIosSimulatorDriverConfig {
             type: 'ios.simulator';
             device: string | Partial<IosSimulatorQuery>;
-            bootArgs?: Record<string, any>;
+            bootArgs?: string;
         }
 
         interface DetoxIosNoneDriverConfig {
@@ -239,9 +239,10 @@ declare global {
         interface DetoxAndroidEmulatorDriverConfig extends DetoxSharedAndroidDriverConfig {
             type: 'android.emulator';
             device: string | { avdName: string };
-            bootArgs?: Record<string, any>;
+            bootArgs?: string;
             gpu?: 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest';
             headless?: boolean;
+            readonly?: boolean;
         }
 
         interface DetoxGenymotionCloudDriverConfig extends DetoxSharedAndroidDriverConfig {

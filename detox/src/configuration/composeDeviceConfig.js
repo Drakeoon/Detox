@@ -20,6 +20,10 @@ function composeDeviceConfig(opts) {
     deviceConfig.device = cliConfig.deviceName;
   }
 
+  if (cliConfig.deviceBootArgs) {
+    deviceConfig.bootArgs = cliConfig.bootArgs;
+  }
+
   return deviceConfig;
 }
 
@@ -99,6 +103,16 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
   const DriverClass = _.attempt(() => driverRegistry.resolve(deviceConfig.type));
   if (_.isError(DriverClass)) {
     throw errorComposer.invalidDeviceType(deviceAlias, deviceConfig, DriverClass);
+  }
+
+  if (deviceConfig.bootArgs) {
+    if (!_.isString(deviceConfig.bootArgs)) {
+      throw errorComposer.malformedDeviceBootArgs(deviceAlias);
+    }
+
+    if (deviceConfig.type !== 'ios.simulator' && deviceConfig.type !== 'android.emulator') {
+      throw errorComposer.cannotUseBootArgsForDevice(deviceAlias, deviceConfig);
+    }
   }
 
   if (deviceConfig.utilBinaryPaths) {
