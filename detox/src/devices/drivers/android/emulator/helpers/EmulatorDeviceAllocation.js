@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const DetoxRuntimeError = require('../../../../../errors/DetoxRuntimeError');
 const logger = require('../../../../../utils/logger').child({ __filename });
 const retry = require('../../../../../utils/retry');
@@ -20,11 +22,14 @@ class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
   }
 
   /**
-   * @param {string} avdName
    * @param {Detox.DetoxAndroidEmulatorDriverConfig} deviceConfig
    * @returns {Promise<null>}
    */
-  async allocateDevice(avdName, deviceConfig) {
+  async allocateDevice(deviceConfig) {
+    const avdName = _.isPlainObject(deviceConfig.device)
+      ? deviceConfig.device.avdName
+      : deviceConfig.device;
+
     this._logAllocationAttempt(avdName);
     const {
       adbName,

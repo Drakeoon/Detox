@@ -61,7 +61,8 @@ class SimulatorDriver extends IosDriver {
     await super.cleanup(deviceId, bundleId);
   }
 
-  async acquireFreeDevice(deviceQuery, deviceConfig) {
+  async acquireFreeDevice(_deviceQuery, deviceConfig) {
+    const deviceQuery = deviceConfig.device;
     const udid = await this.deviceRegistry.allocateDevice(async () => {
       return await this._findOrCreateDevice(deviceQuery);
     });

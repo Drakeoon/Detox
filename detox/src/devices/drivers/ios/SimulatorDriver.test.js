@@ -129,6 +129,8 @@ describe('IOS simulator driver', () => {
       },
     });
 
+    const asConfig = (device) => ({ type: 'ios.simulator', device });
+
     let applesimutils;
 
     beforeEach(() => {
@@ -139,7 +141,7 @@ describe('IOS simulator driver', () => {
     });
 
     it('should accept string as device type', async () => {
-      await uut.acquireFreeDevice('iPhone X');
+      await uut.acquireFreeDevice(void 0, asConfig('iPhone X'));
 
       expect(applesimutils.list).toHaveBeenCalledWith(
         { byType: 'iPhone X' },
@@ -148,7 +150,7 @@ describe('IOS simulator driver', () => {
     });
 
     it('should accept string with comma as device type and OS version', async () => {
-      await uut.acquireFreeDevice('iPhone X, iOS 12.0');
+      await uut.acquireFreeDevice(void 0, asConfig('iPhone X, iOS 12.0'));
 
       expect(applesimutils.list).toHaveBeenCalledWith(
         { byType: 'iPhone X', byOS: 'iOS 12.0' },
@@ -157,7 +159,7 @@ describe('IOS simulator driver', () => {
     });
 
     it('should accept { byId } as matcher', async () => {
-      await uut.acquireFreeDevice({ id: 'C6EC2279-A6EB-40BE-99D2-5F11949F25E5' });
+      await uut.acquireFreeDevice(void 0, asConfig({ id: 'C6EC2279-A6EB-40BE-99D2-5F11949F25E5' }));
 
       expect(applesimutils.list).toHaveBeenCalledWith(
         { byId: 'C6EC2279-A6EB-40BE-99D2-5F11949F25E5' },
@@ -166,7 +168,7 @@ describe('IOS simulator driver', () => {
     });
 
     it('should accept { byName } as matcher', async () => {
-      await uut.acquireFreeDevice({ name: 'Chika' });
+      await uut.acquireFreeDevice(void 0, asConfig({ name: 'Chika' }));
 
       expect(applesimutils.list).toHaveBeenCalledWith(
         { byName: 'Chika' },
@@ -175,7 +177,7 @@ describe('IOS simulator driver', () => {
     });
 
     it('should accept { byType } as matcher', async () => {
-      await uut.acquireFreeDevice({ type: 'iPad Air' });
+      await uut.acquireFreeDevice(void 0, asConfig({ type: 'iPad Air' }));
 
       expect(applesimutils.list).toHaveBeenCalledWith(
         { byType: 'iPad Air' },
@@ -184,7 +186,7 @@ describe('IOS simulator driver', () => {
     });
 
     it('should accept { byType, byOS } as matcher', async () => {
-      await uut.acquireFreeDevice({ type: 'iPad 2', os: 'iOS 9.3.6' });
+      await uut.acquireFreeDevice(void 0, asConfig({ type: 'iPad 2', os: 'iOS 9.3.6' }));
 
       expect(applesimutils.list).toHaveBeenCalledWith(
         { byType: 'iPad 2', byOS: 'iOS 9.3.6' },
@@ -201,7 +203,7 @@ describe('IOS simulator driver', () => {
       givenCreatedDeviceUDID(udidNew);
       givenUsedSimulators(udidUsed);
 
-      const result = await uut.acquireFreeDevice('iPhone Mock');
+      const result = await uut.acquireFreeDevice(void 0, asConfig('iPhone Mock'));
 
       expect(uut.applesimutils.create).toHaveBeenCalledWith(specUsed);
       expect(result).toEqual(udidNew);
@@ -214,7 +216,7 @@ describe('IOS simulator driver', () => {
       givenSystemDevices(specUsed);
       givenNoUsedSimulators();
 
-      const result = await uut.acquireFreeDevice('iPhone Mock');
+      const result = await uut.acquireFreeDevice(void 0, asConfig('iPhone Mock'));
 
       expect(result).toEqual(udid);
       expect(uut.applesimutils.create).not.toHaveBeenCalled();

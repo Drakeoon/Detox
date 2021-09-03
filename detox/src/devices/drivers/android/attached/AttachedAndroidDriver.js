@@ -17,7 +17,8 @@ class AttachedAndroidDriver extends AndroidDriver {
     return this._name;
   }
 
-  async acquireFreeDevice(deviceQuery) {
+  async acquireFreeDevice(_deviceQuery, deviceConfig) {
+    const deviceQuery = deviceConfig.device;
     const adbNamePattern = _.isPlainObject(deviceQuery) ? deviceQuery.adbName : deviceQuery;
     const adbName = await this._deviceRegistry.allocateDevice(() => this._freeDeviceFinder.findFreeDevice(adbNamePattern));
 
