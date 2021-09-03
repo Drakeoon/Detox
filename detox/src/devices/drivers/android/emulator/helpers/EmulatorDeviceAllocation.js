@@ -26,9 +26,7 @@ class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
    * @returns {Promise<null>}
    */
   async allocateDevice(deviceConfig) {
-    const avdName = _.isPlainObject(deviceConfig.device)
-      ? deviceConfig.device.avdName
-      : deviceConfig.device;
+    const { avdName } = deviceConfig.device;
 
     this._logAllocationAttempt(avdName);
     const {

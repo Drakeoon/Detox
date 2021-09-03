@@ -47,18 +47,19 @@ class EmulatorDriver extends AndroidDriver {
   }
 
   async acquireFreeDevice(_deviceQuery, deviceConfig) {
-    const deviceQuery = deviceConfig.device;
-    const avdName = _.isPlainObject(deviceQuery) ? deviceQuery.avdName : deviceQuery;
+    const avdName = deviceConfig.device.avdName;
 
     await this._avdValidator.validate(avdName);
     await this._fixAvdConfigIniSkinNameIfNeeded(avdName, deviceConfig.headless);
 
-    const adbName = await this._deviceAllocation.allocateDevice(avdName, deviceConfig);
+    const adbName = await this._deviceAllocation.allocateDevice(deviceConfig);
+
     await this.adb.apiLevel(adbName);
     await this.adb.disableAndroidAnimations(adbName);
     await this.adb.unlockScreen(adbName);
 
     this._name = `${adbName} (${avdName})`;
+
     return adbName;
   }
 

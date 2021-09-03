@@ -20,6 +20,8 @@ function composeDeviceConfig(opts) {
     deviceConfig.device = cliConfig.deviceName;
   }
 
+  deviceConfig.device = unpackDeviceQuery(deviceConfig);
+
   if (cliConfig.deviceBootArgs) {
     deviceConfig.bootArgs = cliConfig.bootArgs;
   }
@@ -136,6 +138,33 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
 
   if (_.isEmpty(_.pick(deviceConfig.device, expectedProperties))) {
     throw errorComposer.missingDeviceMatcherProperties(deviceAlias, expectedProperties);
+  }
+}
+
+function unpackDeviceQuery(deviceConfig) {
+  const query = deviceConfig.device;
+  if (!_.isString(query)) {
+    return query;
+  }
+
+  let queryObject;
+  switch (deviceConfig.type) {
+    case 'ios.none':
+    case 'ios.simulator':
+      if (_.includes(query, ',')) {
+        const [type, os] = _.split(query, /\s*,\s*/);
+        return { type, os };
+      }
+
+      return { type: query };
+    case 'android.attached':
+      return { adbName: query };
+    case 'android.emulator':
+      return { avdName: query };
+    case 'android.genycloud':
+      return { recipeName: query };
+    default:
+      return query;
   }
 }
 

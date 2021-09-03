@@ -62,7 +62,7 @@ class SimulatorDriver extends IosDriver {
   }
 
   async acquireFreeDevice(_deviceQuery, deviceConfig) {
-    const deviceQuery = deviceConfig.device;
+    const deviceQuery = this._adaptQuery(deviceConfig.device);
     const udid = await this.deviceRegistry.allocateDevice(async () => {
       return await this._findOrCreateDevice(deviceQuery);
     });
@@ -235,13 +235,17 @@ class SimulatorDriver extends IosDriver {
 
   /***
    * @private
-   * @param {String | Object} rawDeviceQuery
+   * @param {{
+   *   byId?: string;
+   *   byName?: string;
+   *   byType?: string;
+   *   byOS?: string;
+   * }} deviceQuery
    * @returns {Promise<String>}
    */
-  async _findOrCreateDevice(rawDeviceQuery) {
+  async _findOrCreateDevice(deviceQuery) {
     let udid;
 
-    const deviceQuery = this._adaptQuery(rawDeviceQuery);
     const { free, taken } = await this._groupDevicesByStatus(deviceQuery);
 
     if (_.isEmpty(free)) {
@@ -285,27 +289,12 @@ class SimulatorDriver extends IosDriver {
     return result;
   }
 
-  _adaptQuery(rawDeviceQuery) {
-    let byId, byName, byOS, byType;
-
-    if (_.isPlainObject(rawDeviceQuery)) {
-      byId = rawDeviceQuery.id;
-      byName = rawDeviceQuery.name;
-      byOS = rawDeviceQuery.os;
-      byType = rawDeviceQuery.type;
-    } else {
-      if (_.includes(rawDeviceQuery, ',')) {
-        [byType, byOS] = _.split(rawDeviceQuery, /\s*,\s*/);
-      } else {
-        byType = rawDeviceQuery;
-      }
-    }
-
+  _adaptQuery({ id, name, os, type }) {
     return _.omitBy({
-      byId,
-      byName,
-      byOS,
-      byType,
+      byId: id,
+      byName: name,
+      byOS: os,
+      byType: type,
     }, _.isUndefined);
   }
 
@@ -318,10 +307,8 @@ class SimulatorDriver extends IosDriver {
     ]).join(' and ');
   }
 
-  _commentDevice(rawDeviceQuery) {
-    return _.isPlainObject(rawDeviceQuery)
-      ? JSON.stringify(rawDeviceQuery)
-      : `(${rawDeviceQuery})`;
+  _commentDevice({ byId, byName, byOS, byType }) {
+    return byId || _.compact([byName, byType, byOS]).join(', ');
   }
 
   async setStatusBar(deviceId, flags) {

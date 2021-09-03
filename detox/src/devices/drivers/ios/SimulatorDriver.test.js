@@ -140,25 +140,7 @@ describe('IOS simulator driver', () => {
       applesimutils.list.mockImplementation(async () => require('./tools/applesimutils.mock')['--list']);
     });
 
-    it('should accept string as device type', async () => {
-      await uut.acquireFreeDevice(void 0, asConfig('iPhone X'));
-
-      expect(applesimutils.list).toHaveBeenCalledWith(
-        { byType: 'iPhone X' },
-        'Searching for device by type = "iPhone X" ...'
-      );
-    });
-
-    it('should accept string with comma as device type and OS version', async () => {
-      await uut.acquireFreeDevice(void 0, asConfig('iPhone X, iOS 12.0'));
-
-      expect(applesimutils.list).toHaveBeenCalledWith(
-        { byType: 'iPhone X', byOS: 'iOS 12.0' },
-        'Searching for device by type = "iPhone X" and by OS = "iOS 12.0" ...'
-      );
-    });
-
-    it('should accept { byId } as matcher', async () => {
+    it('should accept { id } as matcher', async () => {
       await uut.acquireFreeDevice(void 0, asConfig({ id: 'C6EC2279-A6EB-40BE-99D2-5F11949F25E5' }));
 
       expect(applesimutils.list).toHaveBeenCalledWith(
@@ -167,7 +149,7 @@ describe('IOS simulator driver', () => {
       );
     });
 
-    it('should accept { byName } as matcher', async () => {
+    it('should accept { name } as matcher', async () => {
       await uut.acquireFreeDevice(void 0, asConfig({ name: 'Chika' }));
 
       expect(applesimutils.list).toHaveBeenCalledWith(
@@ -176,7 +158,7 @@ describe('IOS simulator driver', () => {
       );
     });
 
-    it('should accept { byType } as matcher', async () => {
+    it('should accept { type } as matcher', async () => {
       await uut.acquireFreeDevice(void 0, asConfig({ type: 'iPad Air' }));
 
       expect(applesimutils.list).toHaveBeenCalledWith(
@@ -185,7 +167,7 @@ describe('IOS simulator driver', () => {
       );
     });
 
-    it('should accept { byType, byOS } as matcher', async () => {
+    it('should accept { type, os } as matcher', async () => {
       await uut.acquireFreeDevice(void 0, asConfig({ type: 'iPad 2', os: 'iOS 9.3.6' }));
 
       expect(applesimutils.list).toHaveBeenCalledWith(

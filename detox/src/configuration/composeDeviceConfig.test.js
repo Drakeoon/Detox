@@ -2,7 +2,11 @@ const _ = require('lodash');
 
 const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 
-const { appWithRelativeBinaryPath, iosSimulatorWithShorthandQuery } = require('./configurations.mock');
+const {
+  appWithRelativeBinaryPath,
+  iosSimulatorWithShorthandQuery,
+  iosSimulatorWithDetailedQuery
+} = require('./configurations.mock');
 
 describe('composeDeviceConfig', () => {
   let composeDeviceConfig;
@@ -54,11 +58,11 @@ describe('composeDeviceConfig', () => {
       };
     });
 
-    it('should extract type, device and utilBinaryPaths', () => {
+    it('should extract type, utilBinaryPaths and unpack device query', () => {
       localConfig.utilBinaryPaths = ['someApp'];
       expect(compose()).toEqual({
         type: localConfig.type,
-        device: localConfig.device,
+        device: iosSimulatorWithDetailedQuery.device,
         utilBinaryPaths: localConfig.utilBinaryPaths,
       });
     });
@@ -69,7 +73,7 @@ describe('composeDeviceConfig', () => {
 
       expect(compose()).toEqual({
         type: localConfig.type,
-        device: localConfig.name,
+        device: iosSimulatorWithDetailedQuery.device,
       });
     });
 
@@ -91,11 +95,14 @@ describe('composeDeviceConfig', () => {
     });
 
     describe('and there is a CLI override', () => {
-      beforeEach(givenCLIOverride('iPad'));
+      beforeEach(givenCLIOverride('iPad, iOS 14.7.1'));
 
       it('should be override .device property', assertCLIOverridesDevice({
         type: 'ios.simulator',
-        device: 'iPad',
+        device: {
+          type: 'iPad',
+          os: 'iOS 14.7.1',
+        },
       }));
     });
   });
@@ -113,11 +120,14 @@ describe('composeDeviceConfig', () => {
     });
 
     describe('and there is a CLI override', () => {
-      beforeEach(givenCLIOverride('iPad'));
+      beforeEach(givenCLIOverride('iPad, iOS 14.7.1'));
 
       it('should be override .device property', assertCLIOverridesDevice({
         type: 'ios.none',
-        device: 'iPad',
+        device: {
+          type: 'iPad',
+          os: 'iOS 14.7.1',
+        },
       }));
     });
   });
@@ -145,7 +155,9 @@ describe('composeDeviceConfig', () => {
 
       it('should be override .device property', assertCLIOverridesDevice({
         type: 'ios.simulator',
-        device: 'iPad',
+        device: {
+          type: 'iPad',
+        },
       }));
     });
   });
@@ -161,7 +173,7 @@ describe('composeDeviceConfig', () => {
       const { type, device } = compose();
 
       expect(type).toBe(expected.type);
-      expect(device).toBe(expected.device);
+      expect(device).toEqual(expected.device);
     };
   }
 

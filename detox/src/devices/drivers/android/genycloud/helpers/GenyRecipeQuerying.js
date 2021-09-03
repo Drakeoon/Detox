@@ -5,12 +5,10 @@ class GenyRecipeQuerying {
     this.recipesService = recipesService;
   }
 
-  async getRecipeFromQuery(deviceQuery) {
-    const queryObj = _.isPlainObject(deviceQuery) ? deviceQuery : { recipeName: deviceQuery };
-    if (queryObj.recipeUUID) {
-      return this.recipesService.getRecipeByUUID(queryObj.recipeUUID);
-    }
-    return this.recipesService.getRecipeByName(queryObj.recipeName);
+  async getRecipeFromQuery({ recipeName, recipeUUID }) {
+    return recipeUUID
+      ? this.recipesService.getRecipeByUUID(recipeUUID)
+      : this.recipesService.getRecipeByName(recipeName);
   }
 }
 
