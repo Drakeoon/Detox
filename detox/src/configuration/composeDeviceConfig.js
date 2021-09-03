@@ -147,7 +147,6 @@ function unpackDeviceQuery(deviceConfig) {
     return query;
   }
 
-  let queryObject;
   switch (deviceConfig.type) {
     case 'ios.none':
     case 'ios.simulator':

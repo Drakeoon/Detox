@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 class GenyRecipeQuerying {
   constructor(recipesService) {
     this.recipesService = recipesService;
