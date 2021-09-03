@@ -240,6 +240,7 @@ declare global {
             type: 'android.emulator';
             device: string | { avdName: string };
             bootArgs?: string;
+            // TODO: rename to gpuMode
             gpu?: 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest';
             headless?: boolean;
             readonly?: boolean;

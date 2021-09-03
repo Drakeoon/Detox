@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
 const driverRegistry = require('../devices/DriverRegistry').default;
+const log = require('../utils/logger').child({ __filename });
 
 /**
  * @param {DetoxConfigErrorComposer} opts.errorComposer
@@ -16,15 +17,8 @@ function composeDeviceConfig(opts) {
     ? composeDeviceConfigFromPlain(opts)
     : composeDeviceConfigFromAliased(opts);
 
-  if (cliConfig.deviceName) {
-    deviceConfig.device = cliConfig.deviceName;
-  }
-
+  applyCLIOverrides(deviceConfig, cliConfig);
   deviceConfig.device = unpackDeviceQuery(deviceConfig);
-
-  if (cliConfig.deviceBootArgs) {
-    deviceConfig.bootArgs = cliConfig.bootArgs;
-  }
 
   return deviceConfig;
 }
@@ -138,6 +132,45 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
 
   if (_.isEmpty(_.pick(deviceConfig.device, expectedProperties))) {
     throw errorComposer.missingDeviceMatcherProperties(deviceAlias, expectedProperties);
+  }
+}
+
+function applyCLIOverrides(deviceConfig, cliConfig) {
+  if (cliConfig.deviceName) {
+    deviceConfig.device = cliConfig.deviceName;
+  }
+
+  const deviceType = deviceConfig.type;
+  if (cliConfig.deviceBootArgs) {
+    if ((deviceType === 'ios.simulator') || (deviceType !== 'android.emulator')) {
+      deviceConfig.bootArgs = cliConfig.deviceBootArgs;
+    } else {
+      log.warn(`--device-boot-args CLI override is not supported by device type = "${deviceType}" and will be ignored`);
+    }
+  }
+
+  if (cliConfig.forceAdbInstall !== undefined) {
+    if (deviceType.startsWith('android.')) {
+      deviceConfig.forceAdbInstall = cliConfig.forceAdbInstall;
+    } else {
+      log.warn(`--force-adb-install CLI override is not supported by device type = "${deviceType}" and will be ignored`);
+    }
+  }
+
+  const emulatorCLIConfig = _.pick(cliConfig, ['headless', 'gpu', 'readonlyEmu']);
+  const emulatorOverrides = _.omitBy({
+    headless: cliConfig.headless,
+    gpu: cliConfig.gpu,
+    readonly: cliConfig.readonlyEmu,
+  }, _.isUndefined);
+
+  if (!_.isEmpty(emulatorOverrides)) {
+    if (deviceType === 'android.emulator') {
+      Object.assign(deviceConfig, emulatorOverrides);
+    } else {
+      const flags = Object.keys(emulatorCLIConfig).map(key => '--' + _.kebabCase(key)).join(', ');
+      log.warn(`${flags} CLI overriding is not supported by device type = "${deviceType}" and will be ignored`);
+    }
   }
 }
 

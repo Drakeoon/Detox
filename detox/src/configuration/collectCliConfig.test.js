@@ -1,3 +1,6 @@
+const inspect = require('util').inspect;
+const J = x => inspect(x);
+
 describe('collectCliConfig', () => {
   let collectCliConfig;
   let argv, env;
@@ -15,47 +18,84 @@ describe('collectCliConfig', () => {
     process.env = __env__;
   });
 
+  function multiplyTest(testCase, pairs) {
+    return pairs.map(([input, expected]) => [...testCase, input, expected]);
+  }
+
+  function asString(testCase) {
+    return multiplyTest(testCase, [
+      [undefined, undefined],
+      ['', ''],
+      ['some', 'some'],
+    ]);
+  }
+
+  function asNumber(testCase) {
+    return multiplyTest(testCase, [
+      [undefined, undefined],
+      [null, undefined],
+      ['', undefined],
+      ['some', NaN],
+      ['0', 0],
+      ['1', 1],
+      ['3000', 3000],
+      [-10.3, -10.3],
+    ]);
+  }
+
+  function asBoolean(testCase) {
+    return multiplyTest(testCase, [
+      [undefined, undefined],
+      [null, undefined],
+      ['', false],
+      ['false', false],
+      ['0', false],
+      ['1', true],
+      ['true', true],
+      ['anything', true],
+      [false, false],
+      [true, true],
+    ]);
+  }
+
   describe.each([
-    ['artifactsLocation',    'DETOX_ARTIFACTS_LOCATION',    'artifacts-location'],
-    ['captureViewHierarchy', 'DETOX_CAPTURE_VIEW_HIERARCHY','capture-view-hierarchy'],
-    ['recordLogs',           'DETOX_RECORD_LOGS',           'record-logs'],
-    ['takeScreenshots',      'DETOX_TAKE_SCREENSHOTS',      'take-screenshots'],
-    ['recordVideos',         'DETOX_RECORD_VIDEOS',         'record-videos'],
-    ['recordPerformance',    'DETOX_RECORD_PERFORMANCE',    'record-performance'],
-    ['recordTimeline',       'DETOX_RECORD_TIMELINE',       'record-timeline'],
-    ['cleanup',              'DETOX_CLEANUP',               'cleanup'],
-    ['configPath',            'DETOX_CONFIG_PATH',           'config-path'],
-    ['configuration',         'DETOX_CONFIGURATION',         'configuration'],
-    ['debugSynchronization', 'DETOX_DEBUG_SYNCHRONIZATION', 'debug-synchronization'],
-    ['deviceBootArgs',       'DETOX_DEVICE_BOOT_ARGS',      'device-boot-args'],
-    ['appLaunchArgs',        'DETOX_APP_LAUNCH_ARGS',       'app-launch-args'],
-    ['deviceName',           'DETOX_DEVICE_NAME',           'device-name'],
-    ['forceAdbInstall',      'DETOX_FORCE_ADB_INSTALL',     'force-adb-install'],
-    ['gpu',                  'DETOX_GPU',                   'gpu'],
-    ['headless',             'DETOX_HEADLESS',              'headless'],
-    ['jestReportSpecs',      'DETOX_JEST_REPORT_SPECS',     'jest-report-specs'],
-    ['keepLockFile',         'DETOX_KEEP_LOCK_FILE',        'keepLockFile'],
-    ['loglevel',             'DETOX_LOGLEVEL',              'loglevel'],
-    ['noColor',              'DETOX_NO_COLOR',              'no-color'],
-    ['reuse',                'DETOX_REUSE',                 'reuse'],
-    ['runnerConfig',          'DETOX_RUNNER_CONFIG',         'runner-config'],
-    ['useCustomLogger',      'DETOX_USE_CUSTOM_LOGGER',     'use-custom-logger'],
-    ['workers',              'DETOX_WORKERS',               'workers'],
-    ['inspectBrk',           'DETOX_INSPECT_BRK',           'inspect-brk'],
-  ])('.%s property' , (key, envName, argName) => {
+    ...asString( ['artifactsLocation',    'DETOX_ARTIFACTS_LOCATION',     'artifacts-location']),
+    ...asString( ['captureViewHierarchy', 'DETOX_CAPTURE_VIEW_HIERARCHY', 'capture-view-hierarchy']),
+    ...asString( ['recordLogs',           'DETOX_RECORD_LOGS',            'record-logs']),
+    ...asString( ['takeScreenshots',      'DETOX_TAKE_SCREENSHOTS',       'take-screenshots']),
+    ...asString( ['recordVideos',         'DETOX_RECORD_VIDEOS',          'record-videos']),
+    ...asString( ['recordPerformance',    'DETOX_RECORD_PERFORMANCE',     'record-performance']),
+    ...asString( ['recordTimeline',       'DETOX_RECORD_TIMELINE',        'record-timeline']),
+    ...asBoolean(['cleanup',              'DETOX_CLEANUP',                'cleanup']),
+    ...asString( ['configPath',           'DETOX_CONFIG_PATH',            'config-path']),
+    ...asString( ['configuration',        'DETOX_CONFIGURATION',          'configuration']),
+    ...asNumber( ['debugSynchronization', 'DETOX_DEBUG_SYNCHRONIZATION',  'debug-synchronization']),
+    ...asString( ['deviceBootArgs',       'DETOX_DEVICE_BOOT_ARGS',       'device-boot-args']),
+    ...asString( ['appLaunchArgs',        'DETOX_APP_LAUNCH_ARGS',        'app-launch-args']),
+    ...asString( ['deviceName',           'DETOX_DEVICE_NAME',            'device-name']),
+    ...asBoolean(['forceAdbInstall',      'DETOX_FORCE_ADB_INSTALL',      'force-adb-install']),
+    ...asString( ['gpu',                  'DETOX_GPU',                    'gpu']),
+    ...asBoolean(['headless',             'DETOX_HEADLESS',               'headless']),
+    ...asBoolean(['jestReportSpecs',      'DETOX_JEST_REPORT_SPECS',      'jest-report-specs']),
+    ...asBoolean(['keepLockFile',         'DETOX_KEEP_LOCK_FILE',         'keepLockFile']),
+    ...asString( ['loglevel',             'DETOX_LOGLEVEL',               'loglevel']),
+    ...asBoolean(['noColor',              'DETOX_NO_COLOR',               'no-color']),
+    ...asBoolean(['reuse',                'DETOX_REUSE',                  'reuse']),
+    ...asString( ['runnerConfig',         'DETOX_RUNNER_CONFIG',          'runner-config']),
+    ...asBoolean( ['useCustomLogger',      'DETOX_USE_CUSTOM_LOGGER',      'use-custom-logger']),
+    ...asNumber( ['workers',              'DETOX_WORKERS',                'workers']),
+    ...asBoolean(['inspectBrk',           'DETOX_INSPECT_BRK',            'inspect-brk']),
+  ])('.%s property' , (key, envName, argName, input, expected) => {
     beforeEach(() => {
-      env[envName] = Math.random();
-      argv[argName] = Math.random();
+      env[envName] = input;
+      argv[argName] = input;
     });
 
-    it('should be extracted from argv if it is provided', () => {
-      const expected = argv[argName];
+    it(`should be extracted from argv if it is provided (${J(input)} -> ${J(expected)})`, () => {
       expect(collectCliConfig({ argv })[key]).toBe(expected);
     });
 
-    it('should be extracted from environment in DETOX_SNAKE_CASE otherwise', () => {
-      const expected = env[envName];
-
+    it(`should be extracted from environment in DETOX_SNAKE_CASE otherwise (${J(input)} -> ${J(expected)})`, () => {
       expect(collectCliConfig({})[key]).toBe(expected);
     });
   });

@@ -2,6 +2,26 @@ const _ = require('lodash');
 
 const argparse = require('../utils/argparse');
 
+const asBoolean = (value) => {
+  if (typeof value === 'boolean') {
+    return value;
+  }
+
+  return value != null
+    ? (value !== 'false' && value !== '0' && value !== '')
+    : undefined;
+};
+
+const asNumber = (value) => {
+  if (typeof value === 'number') {
+    return value;
+  }
+
+  return value != null && value !== ''
+    ? Number(value)
+    : undefined;
+};
+
 function collectCliConfig({ argv }) {
   const env = (key) => argparse.getArgValue(key);
   const get = (key) => argv ? argv[key] : env(key);
@@ -14,25 +34,25 @@ function collectCliConfig({ argv }) {
     recordVideos: get('record-videos'),
     recordPerformance: get('record-performance'),
     recordTimeline: get('record-timeline'),
-    cleanup: get('cleanup'),
+    cleanup: asBoolean(get('cleanup')),
     configPath: get('config-path'),
     configuration: get('configuration'),
-    debugSynchronization: get('debug-synchronization'),
+    debugSynchronization: asNumber(get('debug-synchronization')),
     deviceBootArgs: get('device-boot-args'),
     appLaunchArgs: get('app-launch-args'),
     deviceName: get('device-name'),
-    forceAdbInstall: get('force-adb-install'),
+    forceAdbInstall: asBoolean(get('force-adb-install')),
     gpu: get('gpu'),
-    headless: get('headless'),
-    jestReportSpecs: get('jest-report-specs'),
-    keepLockFile: get('keepLockFile'),
+    headless: asBoolean(get('headless')),
+    jestReportSpecs: asBoolean(get('jest-report-specs')),
+    keepLockFile: asBoolean(get('keepLockFile')),
     loglevel: get('loglevel'),
-    noColor: get('no-color'),
-    reuse: get('reuse'),
+    noColor: asBoolean(get('no-color')),
+    reuse: asBoolean(get('reuse')),
     runnerConfig: get('runner-config'),
-    useCustomLogger: get('use-custom-logger'),
-    workers: get('workers'),
-    inspectBrk: get('inspect-brk'),
+    useCustomLogger: asBoolean(get('use-custom-logger')),
+    workers: asNumber(get('workers')),
+    inspectBrk: asBoolean(get('inspect-brk')),
   }, _.isUndefined);
 }
 

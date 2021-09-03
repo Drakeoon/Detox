@@ -307,7 +307,6 @@ describe('CLI', () => {
           DETOX_CONFIG_PATH: expect.any(String),
           DETOX_REPORT_SPECS: true,
           DETOX_USE_CUSTOM_LOGGER: true,
-          DETOX_FORCE_ADB_INSTALL: false,
           DETOX_READ_ONLY_EMU: false,
         });
       });

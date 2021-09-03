@@ -149,7 +149,6 @@ module.exports = {
   },
   'force-adb-install': {
     boolean: true,
-    default: false,
     group: 'Execution:',
     describe: `Due to problems with the "adb install" command on Android, Detox resorts to a different scheme for install APK's. Setting true will disable that and force usage of "adb install", instead.`,
   },
