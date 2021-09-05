@@ -1,9 +1,15 @@
 const inspect = require('util').inspect;
+
+const { DEVICE_LAUNCH_ARGS_GENERIC_DEPRECATION } = require('./utils/warnings');
+
+jest.mock('../utils/logger');
+
 const J = x => inspect(x);
 
 describe('collectCliConfig', () => {
   let collectCliConfig;
   let argv, env;
+  let logger;
   let __env__;
 
   beforeEach(() => {
@@ -12,6 +18,7 @@ describe('collectCliConfig', () => {
     argv = {};
 
     collectCliConfig = require('./collectCliConfig');
+    logger = require('../utils/logger');
   });
 
   afterEach(() => {
@@ -67,10 +74,11 @@ describe('collectCliConfig', () => {
     ...asString( ['recordPerformance',    'DETOX_RECORD_PERFORMANCE',     'record-performance']),
     ...asString( ['recordTimeline',       'DETOX_RECORD_TIMELINE',        'record-timeline']),
     ...asBoolean(['cleanup',              'DETOX_CLEANUP',                'cleanup']),
-    ...asString( ['configPath',           'DETOX_CONFIG_PATH',            'config-path']),
-    ...asString( ['configuration',        'DETOX_CONFIGURATION',          'configuration']),
+    ...asString( ['configPath',            'DETOX_CONFIG_PATH',            'config-path']),
+    ...asString( ['configuration' ,        'DETOX_CONFIGURATION',          'configuration']),
     ...asNumber( ['debugSynchronization', 'DETOX_DEBUG_SYNCHRONIZATION',  'debug-synchronization']),
     ...asString( ['deviceBootArgs',       'DETOX_DEVICE_BOOT_ARGS',       'device-boot-args']),
+    ...asString( ['deviceBootArgs',       'DETOX_DEVICE_LAUNCH_ARGS',     'device-launch-args']),
     ...asString( ['appLaunchArgs',        'DETOX_APP_LAUNCH_ARGS',        'app-launch-args']),
     ...asString( ['deviceName',           'DETOX_DEVICE_NAME',            'device-name']),
     ...asBoolean(['forceAdbInstall',      'DETOX_FORCE_ADB_INSTALL',      'force-adb-install']),
@@ -81,8 +89,8 @@ describe('collectCliConfig', () => {
     ...asString( ['loglevel',             'DETOX_LOGLEVEL',               'loglevel']),
     ...asBoolean(['noColor',              'DETOX_NO_COLOR',               'no-color']),
     ...asBoolean(['reuse',                'DETOX_REUSE',                  'reuse']),
-    ...asString( ['runnerConfig',         'DETOX_RUNNER_CONFIG',          'runner-config']),
-    ...asBoolean( ['useCustomLogger',      'DETOX_USE_CUSTOM_LOGGER',      'use-custom-logger']),
+    ...asString( ['runnerConfig',          'DETOX_RUNNER_CONFIG',          'runner-config']),
+    ...asBoolean(['useCustomLogger',      'DETOX_USE_CUSTOM_LOGGER',      'use-custom-logger']),
     ...asNumber( ['workers',              'DETOX_WORKERS',                'workers']),
     ...asBoolean(['inspectBrk',           'DETOX_INSPECT_BRK',            'inspect-brk']),
   ])('.%s property' , (key, envName, argName, input, expected) => {
@@ -98,5 +106,15 @@ describe('collectCliConfig', () => {
     it(`should be extracted from environment in DETOX_SNAKE_CASE otherwise (${J(input)} -> ${J(expected)})`, () => {
       expect(collectCliConfig({})[key]).toBe(expected);
     });
+
+    if (key === 'deviceLaunchArgs') {
+      it(`should print a warning`, () => {
+        expect(logger.warn).toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_GENERIC_DEPRECATION);
+      });
+    } else {
+      it(`should not print warnings`, () => {
+        expect(logger.warn).not.toHaveBeenCalled();
+      });
+    }
   });
 });

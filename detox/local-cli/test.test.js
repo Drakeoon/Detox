@@ -8,6 +8,8 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 const yargs = require('yargs');
 
+const { DEVICE_LAUNCH_ARGS_DEPRECATION } = require('./utils/warnings');
+
 describe('CLI', () => {
   let cp;
   let logger;
@@ -584,6 +586,7 @@ describe('CLI', () => {
     test('--device-launch-args should serve as an alias to --device-boot-args', async () => {
       await run(`--device-launch-args "--verbose"`);
       expect(cliCall().env.DETOX_DEVICE_BOOT_ARGS).toBe('--verbose');
+      expect(logger.warn).toHaveBeenCalledWith(DEVICE_LAUNCH_ARGS_DEPRECATION);
     });
 
     test('--app-launch-args should be passed as an environment variable', async () => {

@@ -1,6 +1,9 @@
 const _ = require('lodash');
 
 const argparse = require('../utils/argparse');
+const log = require('../utils/logger').child({ __filename });
+
+const { DEVICE_LAUNCH_ARGS_GENERIC_DEPRECATION } = require('./utils/warnings');
 
 const asBoolean = (value) => {
   if (typeof value === 'boolean') {
@@ -22,9 +25,20 @@ const asNumber = (value) => {
     : undefined;
 };
 
+const deprecateDeviceLaunchArgs = (value) => {
+  if (value) {
+    log.warn(DEVICE_LAUNCH_ARGS_GENERIC_DEPRECATION);
+  }
+
+  return value;
+};
+
 function collectCliConfig({ argv }) {
   const env = (key) => argparse.getArgValue(key);
-  const get = (key) => argv ? argv[key] : env(key);
+  const get = (key, fallback) => {
+    const value = argv ? argv[key] : env(key);
+    return value === undefined ? fallback : value;
+  };
 
   return _.omitBy({
     artifactsLocation: get('artifacts-location'),
@@ -38,7 +52,7 @@ function collectCliConfig({ argv }) {
     configPath: get('config-path'),
     configuration: get('configuration'),
     debugSynchronization: asNumber(get('debug-synchronization')),
-    deviceBootArgs: get('device-boot-args'),
+    deviceBootArgs: get('device-boot-args', deprecateDeviceLaunchArgs(get('device-launch-args'))),
     appLaunchArgs: get('app-launch-args'),
     deviceName: get('device-name'),
     forceAdbInstall: asBoolean(get('force-adb-install')),

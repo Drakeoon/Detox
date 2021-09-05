@@ -17,7 +17,7 @@ const { readJestConfig } = require('./utils/jestInternals');
 const { getPlatformSpecificString, printEnvironmentVariables } = require('./utils/misc');
 const { prependNodeModulesBinToPATH } = require('./utils/misc');
 const splitArgv = require('./utils/splitArgv');
-const { DETOX_ARGV_OVERRIDE_NOTICE } = require('./utils/warnings');
+const { DETOX_ARGV_OVERRIDE_NOTICE, DEVICE_LAUNCH_ARGS_DEPRECATION } = require('./utils/warnings');
 
 module.exports.command = 'test';
 module.exports.desc = 'Run your test suite with the test runner specified in package.json';
@@ -68,6 +68,14 @@ module.exports.middlewares = [
         ...process.argv.slice(2),
         ...parse(process.env.DETOX_ARGV_OVERRIDE),
       ]);
+    }
+
+    return argv;
+  },
+
+  function warnDeviceAppLaunchArgsDeprecation(argv) {
+    if (argv['device-boot-args'] && process.argv.some(a => a.startsWith('--device-launch-args'))) {
+      log.warn(DEVICE_LAUNCH_ARGS_DEPRECATION);
     }
 
     return argv;
