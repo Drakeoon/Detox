@@ -239,7 +239,7 @@ describe('DetoxConfigErrorComposer', () => {
       });
 
       it('should throw on an unknown argument', () => {
-        expect(() => builder.malformedDeviceProperty(undefined, 'unknown')).toThrowErrorMatchingSnapshot();
+        expect(() => builder.unsupportedDeviceProperty(undefined, 'unknown')).toThrowErrorMatchingSnapshot();
       });
     });
 

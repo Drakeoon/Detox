@@ -1336,7 +1336,7 @@ Please fix your Detox config at path:
 `;
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty should throw on an unknown argument 1`] = `
-"Composing .malformedDeviceProperty(unknown) is not implemented
+"Composing .unsupportedDeviceProperty(unknown) is not implemented
 Please report this issue on our GitHub tracker:
 https://github.com/wix/Detox/issues"
 `;

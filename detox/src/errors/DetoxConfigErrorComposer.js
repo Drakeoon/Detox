@@ -370,7 +370,7 @@ Please check your Detox config${this._atPath()}`,
       case 'utilBinaryPaths':
         return this._unsupportedPropertyByDeviceType('utilBinaryPaths', ['android.attached', 'android.emulator', 'android.genycloud'], deviceAlias);
       default:
-        throw new DetoxInternalError(`Composing .malformedDeviceProperty(${propertyName}) is not implemented`);
+        throw new DetoxInternalError(`Composing .unsupportedDeviceProperty(${propertyName}) is not implemented`);
     }
   }
 
