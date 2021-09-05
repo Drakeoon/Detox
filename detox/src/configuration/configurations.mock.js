@@ -108,6 +108,11 @@ const androidEmulator = {
   },
 };
 
+const androidEmulatorWithShorthandQuery = {
+  'type': 'android.emulator',
+  'device': 'Pixel_API_28',
+};
+
 module.exports = {
   allArtifactsConfiguration,
   defaultArtifactsConfiguration,
@@ -126,4 +131,5 @@ module.exports = {
   iosSimulatorWithShorthandQuery,
   iosSimulatorWithDetailedQuery,
   androidEmulator,
+  androidEmulatorWithShorthandQuery,
 };

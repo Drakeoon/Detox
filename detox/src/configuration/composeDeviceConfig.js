@@ -101,23 +101,71 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
     throw errorComposer.invalidDeviceType(deviceAlias, deviceConfig, DriverClass);
   }
 
-  if (deviceConfig.bootArgs) {
+  if (deviceConfig.bootArgs != null) {
     if (!_.isString(deviceConfig.bootArgs)) {
-      throw errorComposer.malformedDeviceBootArgs(deviceAlias);
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'bootArgs');
     }
 
     if (deviceConfig.type !== 'ios.simulator' && deviceConfig.type !== 'android.emulator') {
-      throw errorComposer.cannotUseBootArgsForDevice(deviceAlias, deviceConfig);
+      throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'bootArgs');
     }
   }
 
-  if (deviceConfig.utilBinaryPaths) {
+  if (deviceConfig.utilBinaryPaths != null) {
     if (!Array.isArray(deviceConfig.utilBinaryPaths)) {
-      throw errorComposer.malformedUtilBinaryPaths(deviceAlias);
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'utilBinaryPaths');
     }
 
     if (deviceConfig.utilBinaryPaths.some(s => !_.isString(s))) {
-      throw errorComposer.malformedUtilBinaryPaths(deviceAlias);
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'utilBinaryPaths');
+    }
+
+    if (!deviceConfig.type.match(/^android\.(attached|emulator|genycloud)$/)) {
+      throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'utilBinaryPaths');
+    }
+  }
+
+  if (deviceConfig.forceAdbInstall !== undefined) {
+    if (!_.isBoolean(deviceConfig.forceAdbInstall)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'forceAdbInstall');
+    }
+
+    if (!deviceConfig.type.match(/^android\.(attached|emulator|genycloud)$/)) {
+      throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'forceAdbInstall');
+    }
+  }
+
+  if (deviceConfig.gpu !== undefined) {
+    if (!_.isString(deviceConfig.gpu)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'gpuMethod');
+    }
+
+    if (!deviceConfig.gpu.match(/^(auto|host|swiftshader_indirect|angle_indirect|guest)$/)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'gpuMethod');
+    }
+
+    if (deviceConfig.type !== 'android.emulator') {
+      throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'gpuMethod');
+    }
+  }
+
+  if (deviceConfig.headless !== undefined) {
+    if (!_.isBoolean(deviceConfig.headless)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'headless');
+    }
+
+    if (deviceConfig.type !== 'android.emulator') {
+      throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'headless');
+    }
+  }
+
+  if (deviceConfig.readonly !== undefined) {
+    if (!_.isBoolean(deviceConfig.readonly)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'readonly');
+    }
+
+    if (deviceConfig.type !== 'android.emulator') {
+      throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'readonly');
     }
   }
 

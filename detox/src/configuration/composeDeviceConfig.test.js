@@ -4,6 +4,8 @@ const DetoxConfigErrorComposer = require('../errors/DetoxConfigErrorComposer');
 
 const {
   appWithRelativeBinaryPath,
+  androidEmulator,
+  androidEmulatorWithShorthandQuery,
   iosSimulatorWithShorthandQuery,
   iosSimulatorWithDetailedQuery
 } = require('./configurations.mock');
@@ -54,7 +56,7 @@ describe('composeDeviceConfig', () => {
     beforeEach(() => {
       localConfig = {
         ...appWithRelativeBinaryPath,
-        ...iosSimulatorWithShorthandQuery,
+        ...androidEmulatorWithShorthandQuery,
       };
     });
 
@@ -62,7 +64,7 @@ describe('composeDeviceConfig', () => {
       localConfig.utilBinaryPaths = ['someApp'];
       expect(compose()).toEqual({
         type: localConfig.type,
-        device: iosSimulatorWithDetailedQuery.device,
+        device: androidEmulator.device,
         utilBinaryPaths: localConfig.utilBinaryPaths,
       });
     });
@@ -73,7 +75,7 @@ describe('composeDeviceConfig', () => {
 
       expect(compose()).toEqual({
         type: localConfig.type,
-        device: iosSimulatorWithDetailedQuery.device,
+        device: androidEmulator.device,
       });
     });
 
@@ -95,6 +97,13 @@ describe('composeDeviceConfig', () => {
     });
 
     describe('and there is a CLI override', () => {
+      beforeEach(() => {
+        localConfig = {
+          ...appWithRelativeBinaryPath,
+          ...iosSimulatorWithDetailedQuery,
+        };
+      });
+
       beforeEach(givenCLIOverride('iPad, iOS 14.7.1'));
 
       it('should be override .device property', assertCLIOverridesDevice({
@@ -209,7 +218,7 @@ describe('composeDeviceConfig', () => {
         };
 
         expect(compose).toThrowError(
-          errorComposer.malformedUtilBinaryPaths(localConfig.device)
+          errorComposer.malformedDeviceProperty(localConfig.device, 'utilBinaryPaths')
         );
       });
     });
@@ -294,7 +303,7 @@ describe('composeDeviceConfig', () => {
       });
 
       expect(compose).toThrowError(
-        errorComposer.malformedUtilBinaryPaths(undefined)
+        errorComposer.malformedDeviceProperty(undefined, 'utilBinaryPaths')
       );
     });
   });
