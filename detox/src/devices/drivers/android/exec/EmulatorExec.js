@@ -47,7 +47,7 @@ class LaunchCommand extends ExecCommand {
   _getEmulatorArgs(emulatorName) {
     const {
       bootArgs,
-      gpu = this._getDefaultGPUMethod(),
+      gpuMode = this._getDefaultGPUMode(),
       headless,
       readonly,
       port,
@@ -60,8 +60,8 @@ class LaunchCommand extends ExecCommand {
       '-no-boot-anim',
       headless ? '-no-window' : '',
       readonly ? '-read-only' : '',
-      gpu !== undefined ? '-gpu' : '',
-      gpu !== undefined ? `${gpu}` : '',
+      gpuMode !== undefined ? '-gpu' : '',
+      gpuMode !== undefined ? `${gpuMode}` : '',
       port ? '-port' : '',
       port ? `${port}` : '',
       ...deviceBootArgs,
@@ -71,7 +71,7 @@ class LaunchCommand extends ExecCommand {
     return emulatorArgs;
   }
 
-  _getDefaultGPUMethod() {
+  _getDefaultGPUMode() {
     if (this._options.headless) {
       switch (os.platform()) {
         case 'darwin':

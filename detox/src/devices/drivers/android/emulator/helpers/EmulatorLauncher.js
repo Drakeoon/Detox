@@ -25,7 +25,7 @@ class EmulatorLauncher extends AndroidDeviceLauncher {
   /**
    * @param {string} emulatorName
    * @param {string | undefined} options.bootArgs
-   * @param {string | undefined} options.gpu
+   * @param {string | undefined} options.gpuMode
    * @param {boolean} options.headless
    * @param {number | undefined} options.port
    * @param {boolean} options.readonly

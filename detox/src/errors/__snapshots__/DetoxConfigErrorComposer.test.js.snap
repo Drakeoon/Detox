@@ -715,8 +715,8 @@ HINT: Check that in your Detox config at path:
 }]
 `;
 
-exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMethod") should create an error for aliased configuration 1`] = `
-[DetoxConfigError: Invalid type of "headless" inside the device configuration.
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMode") should create an error for aliased configuration 1`] = `
+[DetoxConfigError: Invalid type of "gpuMode" inside the device configuration.
  Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'.
 
 HINT: Check that in your Detox config at path:
@@ -734,8 +734,8 @@ HINT: Check that in your Detox config at path:
 }]
 `;
 
-exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMethod") should create an error for inlined configuration 1`] = `
-[DetoxConfigError: Invalid type of "headless" inside the device configuration.
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty ("gpuMode") should create an error for inlined configuration 1`] = `
+[DetoxConfigError: Invalid type of "gpuMode" inside the device configuration.
  Expected 'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'.
 
 HINT: Check that in your Detox config at path:
@@ -747,7 +747,7 @@ HINT: Check that in your Detox config at path:
       device: {
         type: 'ios.simulator',
         device: [Object],
-        gpuMethod: 'something_odd'
+        gpuMode: 'something_odd'
       }
     }
   }
@@ -888,6 +888,12 @@ HINT: Check that in your Detox config at path:
     }
   }
 }]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .malformedDeviceProperty should throw on an unknown argument 1`] = `
+"Composing .malformedDeviceProperty(unknown) is not implemented
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
 `;
 
 exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .missingDeviceMatcherProperties should work with aliased configurations 1`] = `
@@ -1122,7 +1128,7 @@ Please fix your Detox config at path:
 }]
 `;
 
-exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("gpuMethod") should create an error for aliased configuration 1`] = `
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("gpuMode") should create an error for aliased configuration 1`] = `
 [DetoxConfigError: The current device type "ios.simulator" does not support "gpuMode" property.
 
 HINT: You can use this property only with the following device types:
@@ -1143,7 +1149,7 @@ Please fix your Detox config at path:
 }]
 `;
 
-exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("gpuMethod") should create an error for inlined configuration 1`] = `
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty ("gpuMode") should create an error for inlined configuration 1`] = `
 [DetoxConfigError: The current device type "ios.simulator" does not support "gpuMode" property.
 
 HINT: You can use this property only with the following device types:
@@ -1160,7 +1166,7 @@ Please fix your Detox config at path:
         device: {
           type: 'iPhone 12'
         },
-        gpuMethod: 'auto'
+        gpuMode: 'auto'
       }
     }
   }
@@ -1327,6 +1333,12 @@ Please fix your Detox config at path:
     }
   }
 }]
+`;
+
+exports[`DetoxConfigErrorComposer (from composeDeviceConfig) .unsupportedDeviceProperty should throw on an unknown argument 1`] = `
+"Composing .malformedDeviceProperty(unknown) is not implemented
+Please report this issue on our GitHub tracker:
+https://github.com/wix/Detox/issues"
 `;
 
 exports[`DetoxConfigErrorComposer (from composeSessionConfig) .invalidDebugSynchronizationProperty should create a generic error, if the config location is not known 1`] = `

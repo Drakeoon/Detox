@@ -135,17 +135,17 @@ function validateDeviceConfig({ deviceConfig, errorComposer, deviceAlias }) {
     }
   }
 
-  if (deviceConfig.gpu !== undefined) {
-    if (!_.isString(deviceConfig.gpu)) {
-      throw errorComposer.malformedDeviceProperty(deviceAlias, 'gpuMethod');
+  if (deviceConfig.gpuMode !== undefined) {
+    if (!_.isString(deviceConfig.gpuMode)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'gpuMode');
     }
 
-    if (!deviceConfig.gpu.match(/^(auto|host|swiftshader_indirect|angle_indirect|guest)$/)) {
-      throw errorComposer.malformedDeviceProperty(deviceAlias, 'gpuMethod');
+    if (!deviceConfig.gpuMode.match(/^(auto|host|swiftshader_indirect|angle_indirect|guest)$/)) {
+      throw errorComposer.malformedDeviceProperty(deviceAlias, 'gpuMode');
     }
 
     if (deviceConfig.type !== 'android.emulator') {
-      throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'gpuMethod');
+      throw errorComposer.unsupportedDeviceProperty(deviceAlias, 'gpuMode');
     }
   }
 
@@ -208,7 +208,7 @@ function applyCLIOverrides(deviceConfig, cliConfig) {
   const emulatorCLIConfig = _.pick(cliConfig, ['headless', 'gpu', 'readonlyEmu']);
   const emulatorOverrides = _.omitBy({
     headless: cliConfig.headless,
-    gpu: cliConfig.gpu,
+    gpuMode: cliConfig.gpu,
     readonly: cliConfig.readonlyEmu,
   }, _.isUndefined);
 

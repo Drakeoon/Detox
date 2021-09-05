@@ -187,8 +187,8 @@ describe('DetoxConfigErrorComposer', () => {
         ['bootArgs', 'aliased', ['--arg']],
         ['forceAdbInstall', 'inlined', 'true'],
         ['forceAdbInstall', 'aliased', 'false'],
-        ['gpuMethod', 'inlined', 'something_odd'],
-        ['gpuMethod', 'aliased', true],
+        ['gpuMode', 'inlined', 'something_odd'],
+        ['gpuMode', 'aliased', true],
         ['headless', 'inlined', 'non-boolean'],
         ['headless', 'aliased', 'non-boolean'],
         ['readonly', 'inlined', 'non-boolean'],
@@ -206,6 +206,10 @@ describe('DetoxConfigErrorComposer', () => {
         deviceConfig[propertyName] = invalidValue;
         expect(builder.malformedDeviceProperty(deviceAlias, propertyName)).toMatchSnapshot();
       });
+
+      it('should throw on an unknown argument', () => {
+        expect(() => builder.malformedDeviceProperty(undefined, 'unknown')).toThrowErrorMatchingSnapshot();
+      });
     });
 
     describe('.unsupportedDeviceProperty', () => {
@@ -214,8 +218,8 @@ describe('DetoxConfigErrorComposer', () => {
         ['bootArgs', 'aliased', '--no-window'],
         ['forceAdbInstall', 'inlined', true],
         ['forceAdbInstall', 'aliased', false],
-        ['gpuMethod', 'inlined', 'auto'],
-        ['gpuMethod', 'aliased', 'auto'],
+        ['gpuMode', 'inlined', 'auto'],
+        ['gpuMode', 'aliased', 'auto'],
         ['headless', 'inlined', true],
         ['headless', 'aliased', true],
         ['readonly', 'inlined', false],
@@ -232,6 +236,10 @@ describe('DetoxConfigErrorComposer', () => {
 
         deviceConfig[propertyName] = invalidValue;
         expect(builder.unsupportedDeviceProperty(deviceAlias, propertyName)).toMatchSnapshot();
+      });
+
+      it('should throw on an unknown argument', () => {
+        expect(() => builder.malformedDeviceProperty(undefined, 'unknown')).toThrowErrorMatchingSnapshot();
       });
     });
 

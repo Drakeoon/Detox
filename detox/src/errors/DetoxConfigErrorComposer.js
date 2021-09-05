@@ -3,6 +3,7 @@ const _ = require('lodash');
 const deviceAppTypes = require('../configuration/utils/deviceAppTypes');
 
 const DetoxConfigError = require('./DetoxConfigError');
+const DetoxInternalError = require('./DetoxInternalError');
 const J = s => JSON.stringify(s);
 
 class DetoxConfigErrorComposer {
@@ -343,12 +344,14 @@ Please check your Detox config${this._atPath()}`,
         return this._invalidPropertyType('utilBinaryPaths', 'an array of strings', deviceAlias);
       case 'forceAdbInstall':
         return this._invalidPropertyType('forceAdbInstall', 'a boolean value', deviceAlias);
-      case 'gpuMethod':
-        return this._invalidPropertyType('headless', "'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'", deviceAlias);
+      case 'gpuMode':
+        return this._invalidPropertyType('gpuMode', "'auto' | 'host' | 'swiftshader_indirect' | 'angle_indirect' | 'guest'", deviceAlias);
       case 'headless':
         return this._invalidPropertyType('headless', 'a boolean value', deviceAlias);
       case 'readonly':
         return this._invalidPropertyType('readonly', 'a boolean value', deviceAlias);
+      default:
+        throw new DetoxInternalError(`Composing .malformedDeviceProperty(${propertyName}) is not implemented`);
     }
   }
 
@@ -358,7 +361,7 @@ Please check your Detox config${this._atPath()}`,
         return this._unsupportedPropertyByDeviceType('bootArgs', ['ios.simulator', 'android.emulator'], deviceAlias);
       case 'forceAdbInstall':
         return this._unsupportedPropertyByDeviceType('forceAdbInstall', ['android.attached', 'android.emulator', 'android.genycloud'], deviceAlias);
-      case 'gpuMethod':
+      case 'gpuMode':
         return this._unsupportedPropertyByDeviceType('gpuMode', ['android.emulator'], deviceAlias);
       case 'headless':
         return this._unsupportedPropertyByDeviceType('headless', ['android.emulator'], deviceAlias);
@@ -366,6 +369,8 @@ Please check your Detox config${this._atPath()}`,
         return this._unsupportedPropertyByDeviceType('readonly', ['android.emulator'], deviceAlias);
       case 'utilBinaryPaths':
         return this._unsupportedPropertyByDeviceType('utilBinaryPaths', ['android.attached', 'android.emulator', 'android.genycloud'], deviceAlias);
+      default:
+        throw new DetoxInternalError(`Composing .malformedDeviceProperty(${propertyName}) is not implemented`);
     }
   }
 

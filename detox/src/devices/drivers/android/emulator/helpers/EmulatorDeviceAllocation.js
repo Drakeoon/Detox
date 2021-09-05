@@ -38,7 +38,7 @@ class EmulatorDeviceAllocation extends AndroidDeviceAllocation {
       try {
         await this._launchEmulator(avdName, {
           bootArgs: deviceConfig.bootArgs,
-          gpu: deviceConfig.gpu,
+          gpuMode: deviceConfig.gpuMode,
           headless: deviceConfig.headless,
           readonly: deviceConfig.readonly,
           port: placeholderPort,
